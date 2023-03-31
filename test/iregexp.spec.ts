@@ -1,6 +1,6 @@
 import { check } from '../src';
 
-describe('iregexp atoms', () => {
+describe('iregexp atoms normal chars', () => {
   it('%x00-27', () => {
     pass('\u0000');
     pass('\u0001');
@@ -42,6 +42,24 @@ describe('iregexp atoms', () => {
     pass('\u0025');
     pass('\u0026');
     pass('\u0027');
+  });
+  it('%x2F-3E', () => {
+    pass('\u002f');
+    pass('\u0030');
+    pass('\u0031');
+    pass('\u0032');
+    pass('\u0033');
+    pass('\u0034');
+    pass('\u0035');
+    pass('\u0036');
+    pass('\u0037');
+    pass('\u0038');
+    pass('\u0039');
+    pass('\u003a');
+    pass('\u003b');
+    pass('\u003c');
+    pass('\u003d');
+    pass('\u003e');
   });
   it('%x40-5A', () => {
     pass('\u0040');
@@ -112,6 +130,27 @@ describe('iregexp atoms', () => {
   });
 });
 
+describe('iregexp parens atoms', () => {
+  it('parens', () => {
+    pass('(a)');
+    pass('(a)+');
+    pass('(a){2}');
+    pass('(a){2,3}');
+  });
+  it('should fail on mismatched parens', () => {
+    fail('(');
+    fail(')');
+    fail('(a');
+    fail('a)');
+  });
+});
+
+describe('iregexp atoms', () => {
+  it('sequence', () => {
+    pass('a(a)a');
+  });
+});
+
 describe('iregexp quantifiers', () => {
   it('quantifier', () => {
     pass('a*');
@@ -119,24 +158,30 @@ describe('iregexp quantifiers', () => {
     pass('a?');
   });
   it('quantity', () => {
-    pass('a{42}');
-    pass('a{42,43}');
+    pass('a{2}');
+    pass('a{2,3}');
   });
   it('should fail on invalid quantifiers', () => {
-    fail("*");
-    fail("+");
-    fail("?");
-    fail("a**");
-    fail("a++");
-    fail("a??");
+    fail('*');
+    fail('+');
+    fail('?');
+    fail('a**');
+    fail('a++');
+    fail('a??');
   });
   it('should fail on invalid quantity', () => {
-    fail("{");
-    fail("}");
-    fail("{}");
-    fail("{,}");
-    fail("{4,}");
-    fail("{,2}");
+    fail('{');
+    fail('}');
+    fail('{}');
+    fail('{,}');
+    fail('{4,}');
+    fail('{,2}');
+    fail('a{');
+    fail('a}');
+    fail('a{}');
+    fail('a{,}');
+    fail('a{4,}');
+    fail('a{,2}');
   });
 });
 

@@ -42,6 +42,8 @@ const C_LBRC: Class = 2; // {
 const C_RBRC: Class = 3; // }
 const C_DGIT: Class = 4; // 0-9
 const C_CMMA: Class = 5; // ,
+const C_LPAR: Class = 6; // (
+const C_RPAR: Class = 7; // )
 
 const ascii_class: Class[] = [
     /*
@@ -54,9 +56,9 @@ const ascii_class: Class[] = [
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    __,     __,     C_QU,   C_QU,   C_CMMA, __,     __,     __,
+    C_LPAR, C_RPAR, C_QU,   C_QU,   C_CMMA, __,     __,     C_NC,
     C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT,
-    C_DGIT, C_DGIT, __,     __,     __,     __,     __,     C_QU, 
+    C_DGIT, C_DGIT, C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_QU, 
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
@@ -71,8 +73,10 @@ const ascii_class: Class[] = [
 
 const GO: State = 0; //  start
 const OK: State = 1; //  ok
-const QN: State = 2; //  qty min
-const QX: State = 3; //  qty max
+const QM: State = 2; //  qty min { requires digit
+const QN: State = 3; //  qty min ... digit or ,
+const QA: State = 4; //  qty max , requires digit
+const QX: State = 5; //  qty max ... digit or }
 
 const state_transition_table: State[][] = [
   /*
@@ -82,17 +86,20 @@ const state_transition_table: State[][] = [
   the state is OK and if the mode is DONE.
 
                                    DGIT
-                     NC  QU   {   }   |   , */
-  /* start    GO */ [-2, __, __, __, __, -2],
-  /* ok       OK */ [-2, -3, -4, __, __, __],
-  /* qty min  QN */ [__, __, __, -5, QN, QX],
-  /* qty max  QX */ [__, __, __, -5, QX, __],
+                     NC  QU   {   }   |   ,   (   )  */
+  /* start    GO */ [-2, __, __, __, -2, -2, -6, __],
+  /* ok       OK */ [-2, -3, -4, __, -2, __, -6, -7],
+  /* qty min  QM */ [__, __, __, __, QN, __, __, __],
+  /* qty min  QN */ [__, __, __, -5, QN, QA, __, __],
+  /* qty max  QA */ [__, __, __, __, QX, __, __, __],
+  /* qty max  QX */ [__, __, __, -5, QX, __, __, __],
 ];
 
 // these modes can be pushed on the stack
 export enum Mode {
   DONE,
   QUANTITY,
+  PARENS,
 }
 
 class IRegexpChecker {
@@ -155,13 +162,23 @@ class IRegexpChecker {
     } else {
       // or perform on of the actions
       switch (nextState){
+        case -7: // )
+          this.pop(Mode.PARENS);
+          this.quantifiable = true;
+          this.state = OK;
+          break;
+        case -6: // (
+          this.push(Mode.PARENS)
+          this.quantifiable = false;
+          this.state = GO;
+          break;
         case -5: // }
           this.pop(Mode.QUANTITY);
           this.state = OK;
           break;
         case -4: // {
           this.push(Mode.QUANTITY);
-          this.state = QN;
+          this.state = QM;
           break;
         case -3: // * + ?
           if (!this.quantifiable) {
@@ -178,6 +195,8 @@ class IRegexpChecker {
           this.onError();
       }
     }
+
+    //console.log(`${this.offset} ch: ${ch}, next state: ${this.state}`);
 
     this.offset++;
   }
