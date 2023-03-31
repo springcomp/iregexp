@@ -118,14 +118,25 @@ describe('iregexp quantifiers', () => {
     pass('a+');
     pass('a?');
   });
-  //it('quantity', () => {
-  //  pass('a{42}');
-  //  pass('a{42,43}');
-  //});
+  it('quantity', () => {
+    pass('a{42}');
+    pass('a{42,43}');
+  });
   it('should fail on invalid quantifiers', () => {
     fail("*");
     fail("+");
     fail("?");
+    fail("a**");
+    fail("a++");
+    fail("a??");
+  });
+  it('should fail on invalid quantity', () => {
+    fail("{");
+    fail("}");
+    fail("{}");
+    fail("{,}");
+    fail("{4,}");
+    fail("{,2}");
   });
 });
 

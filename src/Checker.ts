@@ -31,13 +31,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-const __ = -1; // the universal error code
-
 export type State = number;
 export type Class = number;
 
+const __: number = -1; // the universal error code
+
 const C_NC: Class = 0; // normal char
 const C_QU: Class = 1; // quantifier
+const C_LBRC: Class = 2; // {
+const C_RBRC: Class = 3; // }
+const C_DGIT: Class = 4; // 0-9
+const C_CMMA: Class = 5; // ,
 
 const ascii_class: Class[] = [
     /*
@@ -50,9 +54,9 @@ const ascii_class: Class[] = [
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    __,     __,     C_QU,   C_QU,   __,     __,     __,     __,
-    __,     __,     __,     __,     __,     __,     __,     __, 
-    __,     __,     __,     __,     __,     __,     __,     C_QU, 
+    __,     __,     C_QU,   C_QU,   C_CMMA, __,     __,     __,
+    C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT,
+    C_DGIT, C_DGIT, __,     __,     __,     __,     __,     C_QU, 
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
@@ -62,11 +66,13 @@ const ascii_class: Class[] = [
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   __,     __,     __,     C_NC,   C_NC,
+    C_NC,   C_NC,   C_NC,   C_LBRC, __,     C_RBRC, C_NC,   C_NC,
 ];
 
 const GO: State = 0; //  start
 const OK: State = 1; //  ok
+const QN: State = 2; //  qty min
+const QX: State = 3; //  qty max
 
 const state_transition_table: State[][] = [
   /*
@@ -75,15 +81,18 @@ const state_transition_table: State[][] = [
   negative number. A regular expression is accepted if at the end of the text
   the state is OK and if the mode is DONE.
 
-                  NC  QU */
-  /* start GO */ [-2, __],
-  /* ok    OK */ [-2, -3],
+                                   DGIT
+                     NC  QU   {   }   |   , */
+  /* start    GO */ [-2, __, __, __, __, -2],
+  /* ok       OK */ [-2, -3, -4, __, __, __],
+  /* qty min  QN */ [__, __, __, -5, QN, QX],
+  /* qty max  QX */ [__, __, __, -5, QX, __],
 ];
 
 // these modes can be pushed on the stack
 export enum Mode {
   DONE,
-  ATOM,
+  QUANTITY,
 }
 
 class IRegexpChecker {
@@ -124,17 +133,14 @@ class IRegexpChecker {
 
     // determine the character's class
 
-    if (ch < 0) {
-      this.onError();
-    }
     if (ch >= 128) {
       nextClass = C_NC;
     } else {
       nextClass = ascii_class[ch];
-      //console.log(nextClass);
-      if (nextClass <= __){
-        this.onError();
-      }
+      ////console.log(nextClass);
+      //if (nextClass <= __){
+      //  this.onError();
+      //}
     }
 
     // get the next state from the state transition table
@@ -149,8 +155,15 @@ class IRegexpChecker {
     } else {
       // or perform on of the actions
       switch (nextState){
+        case -5: // }
+          this.pop(Mode.QUANTITY);
+          this.state = OK;
+          break;
+        case -4: // {
+          this.push(Mode.QUANTITY);
+          this.state = QN;
+          break;
         case -3: // * + ?
-          //console.log(this.quantifiable);
           if (!this.quantifiable) {
             this.onError();
           }
@@ -163,7 +176,6 @@ class IRegexpChecker {
           break;
         default:
           this.onError();
-          break;
       }
     }
 
