@@ -45,6 +45,15 @@ const C_CMMA: Class = 5; // ,
 const C_LPAR: Class = 6; // (
 const C_RPAR: Class = 7; // )
 const C_PIPE: Class = 8; // |
+const C_ESC: Class = 9; // \
+const C_RNGE: Class = 10; // -
+const C_DOT: Class = 11; // .
+const C_LBRK: Class = 12; // [
+const C_RBRK: Class = 13; // ]
+const C_EXCL: Class = 14; // ^
+const C_LN: Class = 15; // n
+const C_LR: Class = 16; // r
+const C_LT: Class = 17; // t
 
 const ascii_class: Class[] = [
     /*
@@ -57,18 +66,18 @@ const ascii_class: Class[] = [
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_LPAR, C_RPAR, C_QU,   C_QU,   C_CMMA, __,     __,     C_NC,
+    C_LPAR, C_RPAR, C_QU,   C_QU,   C_CMMA, C_RNGE, C_DOT,  C_NC,
     C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT,
     C_DGIT, C_DGIT, C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_QU, 
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   __,     __,     __,     C_NC,   C_NC,
+    C_NC,   C_NC,   C_NC,   C_LBRK, C_ESC,  C_RBRK, C_EXCL, C_NC,
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
+    C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_LN,   C_NC,
+    C_NC,   C_NC,   C_LR,   C_NC,   C_LT,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_LBRC, C_PIPE, C_RBRC, C_NC,   C_NC,
 ];
 
@@ -79,6 +88,7 @@ const QN: State = 3; //  qty min ... digit or ,
 const QA: State = 4; //  qty max , requires digit
 const QX: State = 5; //  qty max ... digit or }
 const PI: State = 6; //  pipe
+const ES: State = 7; //  escap e
 
 const state_transition_table: State[][] = [
   /*
@@ -87,15 +97,15 @@ const state_transition_table: State[][] = [
   negative number. A regular expression is accepted if at the end of the text
   the state is OK and if the mode is DONE.
 
-                                    DIGIT
-                     NC  QU   {   }   |   ,   (   )   |   */
-  /* start    GO */ [-2, __, __, __, -2, -2, -6, __, __],
-  /* ok       OK */ [-2, -3, -4, __, -2, __, -6, -7, -8],
-  /* qty min  QM */ [__, __, __, __, QN, __, __, __, __],
-  /* qty min  QN */ [__, __, __, -5, QN, QA, __, __, __],
-  /* qty max  QA */ [__, __, __, __, QX, __, __, __, __],
-  /* qty max  QX */ [__, __, __, -5, QX, __, __, __, __],
-  /* pipe     PI */ [-9, __, __, __, __, __, -6, __, __],
+                     NC  QU   {   }  0-9  ,   (   )   |   \   -   .   [   ]   ^   n   r   t
+  /* start    GO */ [-2, __, __, __, -2, -2, -6, __, __, ES, __, __, __, __, -2, -2, -2, -2],
+  /* ok       OK */ [-2, -3, -4, __, -2, __, -6, -7, -8, ES, __, __, __, __, -2, -2, -2, -2],
+  /* qty min  QM */ [__, __, __, __, QN, __, __, __, __, __, __, __, __, __, __, __, __, __],
+  /* qty min  QN */ [__, __, __, -5, QN, QA, __, __, __, __, __, __, __, __, __, __, __, __],
+  /* qty max  QA */ [__, __, __, __, QX, __, __, __, __, __, __, __, __, __, __, __, __, __],
+  /* qty max  QX */ [__, __, __, -5, QX, __, __, __, __, __, __, __, __, __, __, __, __, __],
+  /* pipe     PI */ [-9, __, __, __, __, __, -6, __, __, __, __, __, __, __, -9, -9, -9, -9],
+  /* escape   ES */ [__, OK, OK, OK, __, __, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK],
 ];
 
 // these modes can be pushed on the stack
@@ -147,10 +157,6 @@ class IRegexpChecker {
       nextClass = C_NC;
     } else {
       nextClass = ascii_class[ch];
-      ////console.log(nextClass);
-      //if (nextClass <= __){
-      //  this.onError();
-      //}
     }
 
     // get the next state from the state transition table
