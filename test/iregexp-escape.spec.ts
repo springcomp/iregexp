@@ -1,6 +1,6 @@
 import { pass, fail } from './utils';
 
-describe('iregexp atoms single char esc', () => {
+describe('iregexp character class single char esc', () => {
   it('%x28-2B', () => {
     pass('\\(');
     pass('\\)');

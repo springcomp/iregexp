@@ -89,6 +89,13 @@ const QN: State = 4; //  qty min ... digit or ,
 const QA: State = 5; //  qty max , requires digit
 const QX: State = 6; //  qty max ... digit or }
 const ES: State = 7; //  escape
+const LB: State = 8; //  bracket [ 
+const BR: State = 9; //  bracket [^ ... 
+const BH: State = 10; // bracket [- ... 
+const BE: State = 11; // bracket ... CCE1 or ]
+const BI: State = 12; // bracket ... requires CCchar after ( "-" ccChar )
+const BJ: State = 13; // bracket ... requires CCchar after ( "-" ccChar )
+const BS: State = 14; // bracket \ escape sequence
 
 const state_transition_table: State[][] = [
   /*
@@ -97,15 +104,22 @@ const state_transition_table: State[][] = [
   negative number. A regular expression is accepted if at the end of the text
   the state is OK and if the mode is DONE.
 
-                     NC   (   )  QU   ,   -   .  0-9  [   \   ]   ^   n   r   t   {   |   }  
-  /* start    GO */ [-2, -6, __, __, -2, __, __, -2, __, ES, __, -2, -2, -2, -2, __, __, __],
-  /* ok       OK */ [-2, -6, -7, -3, __, __, __, -2, __, ES, __, -2, -2, -2, -2, -4, -8, __],
-  /* pipe     PI */ [-9, -6, __, __, __, __, __, __, __, __, __, -9, -9, -9, -9, __, __, __],
-  /* qty min  QM */ [__, __, __, __, __, __, __, QN, __, __, __, __, __, __, __, __, __, __],
-  /* qty min  QN */ [__, __, __, __, QA, __, __, QN, __, __, __, __, __, __, __, __, __, -5],
-  /* qty max  QA */ [__, __, __, __, __, __, __, QX, __, __, __, __, __, __, __, __, __, __],
-  /* qty max  QX */ [__, __, __, __, __, __, __, QX, __, __, __, __, __, __, __, __, __, -5],
-  /* escape   ES */ [__, OK, OK, OK, __, OK, OK, __, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK],
+                      NC    (    )   QU    ,    -    .   0-9   [    \    ]    ^    n    r    t    {    |    }  
+  /* start    GO */ [ -2,  -6,  __,  __,  -2,  __,  __,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  __,  __,  __],
+  /* ok       OK */ [ -2,  -6,  -7,  -3,  __,  __,  __,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -4,  -8,  __],
+  /* pipe     PI */ [ -9,  -6,  __,  __,  __,  __,  __,  __, -__,  __,  __,  -9,  -9,  -9,  -9,  __,  __,  __],
+  /* qty min  QM */ [ __,  __,  __,  __,  __,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
+  /* qty min  QN */ [ __,  __,  __,  __,  QA,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  -5],
+  /* qty max  QA */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
+  /* qty max  QX */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  -5],
+  /* escape   ES */ [ __,  OK,  OK,  OK,  __,  OK,  OK,  __,  OK,  OK,  OK,  OK,  OK,  OK,  OK,  OK,  OK,  OK],
+  /* range    LB */ [ BE,  BE,  BE,  BE,  BE,  BH,  BE,  BE,  __,  BS,  __,  BR,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range    BR */ [ BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range    BH */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range    BE */ [ BE,  BE,  BE,  BE,  BE,  BI,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range    BI */ [ BJ,  BJ,  BJ,  BJ,  BJ,  __,  BJ,  BJ,  __,  BS, -11,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ],
+  /* range    BJ */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range    BS */ [ __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
 ];
 
 // these modes can be pushed on the stack
@@ -113,6 +127,7 @@ export enum Mode {
   DONE,
   QUANTITY,
   PARENS,
+  BRACKET,
 }
 
 class IRegexpChecker {
@@ -171,6 +186,16 @@ class IRegexpChecker {
     } else {
       // or perform on of the actions
       switch (nextState){
+        case -11: // [
+          this.pop(Mode.BRACKET);
+          this.quantifiable = true;
+          this.state = OK;
+          break;
+        case -10: // [
+          this.push(Mode.BRACKET);
+          this.quantifiable = false;
+          this.state = LB;
+          break;
         case -9: // completed | branch
           this.quantifiable = true;
           this.state = OK;
