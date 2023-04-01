@@ -72,9 +72,16 @@ describe('charClassEsc', () => {
   it('should fail on invalid S character class', () => {
     fail('\\p{Sx}');
   });
-  //it('\\p{Is} IsBlock', () => {
-  //  pass('\\p{}');
-  //});
+  it('\\p{Is} IsBlock', () => {
+    pass('\\p{IsAlpha}');
+    pass('\\p{IsLatin}');
+  });
+  it('\\p{Is} IsBlock syntax', () => {
+    pass('\\p{Is-0123-abcd-456-ABCD-789-EFGH-}');
+  });
+  it('should fail on invalid Is block', () => {
+    fail('\\p{Is}');
+  });
   it('should allow character class in range', () => {
     pass('[\\p{L}]');
     pass('[\\p{M}]');

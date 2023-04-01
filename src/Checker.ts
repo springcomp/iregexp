@@ -44,35 +44,38 @@ const C_CMMA: Class = 4; // ,
 const C_RNGE: Class = 5; // -
 const C_DOT: Class = 6; // .
 const C_DGIT: Class = 7; // 0-9
-const C_UC: Class = 8; // C
-const C_UL: Class = 9; // L
-const C_UM: Class = 10; // M
-const C_UN: Class = 11; // N
-const C_UP: Class = 12; // P
-const C_US: Class = 13; // S
-const C_UZ: Class = 14; // Z
-const C_LBRK: Class = 15; // [
-const C_ESC: Class = 16; // \
-const C_RBRK: Class = 17; // ]
-const C_EXCL: Class = 18; // ^
-const C_LC: Class = 19; // c
-const C_LD: Class = 20; // d
-const C_LE: Class = 21; // e
-const C_LF: Class = 22; // f
-const C_LI: Class = 23; // i
-const C_LK: Class = 24; // k
-const C_LL: Class = 25; // l
-const C_LM: Class = 26; // m
-const C_LN: Class = 27; // n
-const C_LO: Class = 28; // o
-const C_LP: Class = 29; // p
-const C_LR: Class = 30; // r
-const C_LS: Class = 31; // r
-const C_LT: Class = 32; // s
-const C_LU: Class = 33; // u
-const C_LBRC: Class = 34; // {
-const C_PIPE: Class = 35; // |
-const C_RBRC: Class = 36; // }
+const C_UA: Class = 8; // [A-Z] except the following letters...
+const C_UC: Class = 9; // C
+const C_UI: Class = 10; // I
+const C_UL: Class = 11; // L
+const C_UM: Class = 12; // M
+const C_UN: Class = 13; // N
+const C_UP: Class = 14; // P
+const C_US: Class = 15; // S
+const C_UZ: Class = 16; // Z
+const C_LBRK: Class = 17; // [
+const C_ESC: Class = 18; // \
+const C_RBRK: Class = 19; // ]
+const C_EXCL: Class = 20; // ^
+const C_LA: Class = 21; // [a-z] except the following letters...
+const C_LC: Class = 22; // c
+const C_LD: Class = 23; // d
+const C_LE: Class = 24; // e
+const C_LF: Class = 25; // f
+const C_LI: Class = 26; // i
+const C_LK: Class = 27; // k
+const C_LL: Class = 28; // l
+const C_LM: Class = 29; // m
+const C_LN: Class = 30; // n
+const C_LO: Class = 31; // o
+const C_LP: Class = 32; // p
+const C_LR: Class = 33; // r
+const C_LS: Class = 34; // r
+const C_LT: Class = 35; // s
+const C_LU: Class = 36; // u
+const C_LBRC: Class = 37; // {
+const C_PIPE: Class = 38; // |
+const C_RBRC: Class = 39; // }
 
 const ascii_class: Class[] = [
     /*
@@ -89,15 +92,15 @@ const ascii_class: Class[] = [
     C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT, C_DGIT,
     C_DGIT, C_DGIT, C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_QU, 
 
-    C_NC,   C_NC,   C_NC,   C_UC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   C_NC,   C_UL,   C_UM,   C_UN,   C_NC,
-    C_UP,   C_NC,   C_NC,   C_US,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_UZ,   C_LBRK, C_ESC,  C_RBRK, C_EXCL, C_NC,
+    C_NC,   C_UA,   C_UA,   C_UC,   C_UA,   C_UA,   C_UA,   C_UA,
+    C_UA,   C_UI,   C_UA,   C_UA,   C_UL,   C_UM,   C_UN,   C_UA,
+    C_UP,   C_UA,   C_UA,   C_US,   C_UA,   C_UA,   C_UA,   C_UA,
+    C_UA,   C_UA,   C_UZ,   C_LBRK, C_ESC,  C_RBRK, C_EXCL, C_NC,
 
-    C_NC,   C_NC,   C_NC,   C_LC,   C_LD,   C_LE,   C_LF,   C_NC,
-    C_NC,   C_LI,   C_NC,   C_LK,   C_LL,   C_LM,   C_LN,   C_LO,
-    C_LP,   C_NC,   C_LR,   C_LS,   C_LT,   C_LU,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   C_LBRC, C_PIPE, C_RBRC, C_NC,   C_NC,
+    C_NC,   C_LA,   C_LA,   C_LC,   C_LD,   C_LE,   C_LF,   C_LA,
+    C_LA,   C_LI,   C_LA,   C_LK,   C_LL,   C_LM,   C_LN,   C_LO,
+    C_LP,   C_LA,   C_LR,   C_LS,   C_LT,   C_LU,   C_LA,   C_LA,
+    C_LA,   C_LA,   C_LA,   C_LBRC, C_PIPE, C_RBRC, C_NC,   C_NC,
 ];
 
 const GO: State = 0; //  start
@@ -125,6 +128,9 @@ const PN: State = 21; // char props \p{N
 const PP: State = 22; // char props \p{P
 const PS: State = 23; // char props \p{S
 const PZ: State = 24; // char props \p{Z
+const IS: State = 25; // char props \p{I
+const IT: State = 26; // char props \p{Is
+const IU: State = 27; // char props \p{Is·
 
 const state_transition_table: State[][] = [
   /*
@@ -133,32 +139,35 @@ const state_transition_table: State[][] = [
   negative number. A regular expression is accepted if at the end of the text
   the state is OK and if the mode is DONE.
 
-                        NC    (    )  *+?    ,    -    .   0-9   C    L    M    N    P    S    Z    [    \    ]    ^    c    d    e    f    i    k    l    m    n    o    p    r    s    t    u    {    |    }
-  /* start      GO */ [ -2,  -6,  __,  __,  -2,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  __,  __,  __],
-  /* ok         OK */ [ -2,  -6,  -7,  -3,  __,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -4,  -8,  __],
-  /* pipe       PI */ [ -9,  -6,  __,  __,  __,  __,  -9,  __,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  __,  __,  __,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  __,  __,  __],
-  /* qty min    QM */ [ __,  __,  __,  __,  __,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
-  /* qty min    QN */ [ __,  __,  __,  __,  QA,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  -5],
-  /* qty max    QA */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
-  /* qty max    QX */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  -5],
-  /* escape     ES */ [ __,  OK,  OK,  OK,  __,  OK,  OK,  __,  __,  __,  __,  __,  CP,  __,  __,  OK,  OK,  OK,  OK,  __,  __,  __,  __,  __,  __,  __,  __,  OK,  __,  CP,  OK,  OK,  OK,  __,  OK,  OK,  OK],
-  /* range      LB */ [ BE,  BE,  BE,  BE,  BE,  BH,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS,  __,  BR,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range      BR */ [ BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range      BH */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range      BE */ [ BE,  BE,  BE,  BE,  BE,  BI,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range      BI */ [ BJ,  BJ,  BJ,  BJ,  BJ,  __,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  __,  BS, -11,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ],
-  /* range      BJ */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range      BS */ [ __,  BE,  BE,  BE,  __,  BE,  BE,  __,  __,  __,  __,  __,  CP,  __,  __,  BE,  BE,  BE,  BE,  __,  __,  __,  __,  __,  __,  __,  __,  BE,  __,  CP,  BE,  __,  BE,  __,  BE,  BE,  BE],
-  /* char props CP */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, -12,  __,  __],
-  /* char props CB */ [ __,  __,  __,  __,  __,  __,  __,  __,  PC,  PL,  PM,  PN,  PP,  PS,  PZ,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
-  /* char props CE */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, -13],
-  /* char \p{C} PC */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  __,  CE,  __,  __,  __,  __,  CE,  CE,  __,  __,  __,  __,  __,  __,  __, -13],
-  /* char \p{L} PL */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  CE,  __,  CE,  __,  __,  __,  CE,  CE,  __,  __, -13],
-  /* char \p{M} PM */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  CE,  __,  __,  __,  __,  __,  CE,  __,  __,  __,  __,  __,  __,  __,  __, -13],
-  /* char \p{N} PN */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  __,  __,  __,  CE,  __,  __,  CE,  __,  __,  __,  __,  __,  __,  __, -13],
-  /* char \p{P} PP */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  CE,  CE,  CE,  CE,  __,  __,  __,  __,  CE,  __,  __,  CE,  __,  __,  __,  __, -13],
-  /* char \p{S} PS */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  __,  __,  __,  CE,  __,  CE,  __,  CE,  __,  __,  __,  __,  __,  __,  __, -13],
-  /* char \p{Z} PZ */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  __,  __,  CE,  __,  CE,  __,  __,  __,  __, -13],
+                         NC    (    )  *+?    ,    -    .   0-9 A-Z    C    I    L    M    N    P    S    Z    [    \    ]    ^  a-z    c    d    e    f    i    k    l    m    n    o    p    r    s    t    u    {    |    }
+  /* start       GO */ [ -2,  -6,  __,  __,  -2,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  __,  __,  __],
+  /* ok          OK */ [ -2,  -6,  -7,  -3,  __,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -4,  -8,  __],
+  /* pipe        PI */ [ -9,  -6,  __,  __,  __,  __,  -9,  __,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  __,  __,  __,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  -9,  __,  __,  __],
+  /* qty min     QM */ [ __,  __,  __,  __,  __,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
+  /* qty min     QN */ [ __,  __,  __,  __,  QA,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  -5],
+  /* qty max     QA */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
+  /* qty max     QX */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  -5],
+  /* escape      ES */ [ __,  OK,  OK,  OK,  __,  OK,  OK,  __,  __,  __,  __,  __,  __,  __,  CP,  __,  __,  OK,  OK,  OK,  OK,  __,  __,  __,  __,  __,  __,  __,  __,  __,  OK,  __,  CP,  OK,  OK,  OK,  __,  OK,  OK,  OK],
+  /* range       LB */ [ BE,  BE,  BE,  BE,  BE,  BH,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS,  __,  BR,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range       BR */ [ BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range       BH */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range       BE */ [ BE,  BE,  BE,  BE,  BE,  BI,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range       BI */ [ BJ,  BJ,  BJ,  BJ,  BJ,  __,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  __,  BS, -11,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ],
+  /* range       BJ */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+  /* range       BS */ [ __,  BE,  BE,  BE,  __,  BE,  BE,  __,  __,  __,  __,  __,  __,  __,  CP,  __,  __,  BE,  BE,  BE,  BE,  __,  __,  __,  __,  __,  __,  __,  __,  __,  BE,  __,  CP,  BE,  __,  BE,  __,  BE,  BE,  BE],
+  /* char props  CP */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, -12,  __,  __],
+  /* char props  CB */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  PC,  IS,  PL,  PM,  PN,  PP,  PS,  PZ,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
+  /* char props  CE */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, -13],
+  /* char \p{C}  PC */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  __,  CE,  __,  __,  __,  __,  CE,  CE,  __,  __,  __,  __,  __,  __,  __, -13],
+  /* char \p{L}  PL */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  CE,  __,  CE,  __,  __,  __,  CE,  CE,  __,  __, -13],
+  /* char \p{M}  PM */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  CE,  __,  __,  __,  __,  __,  CE,  __,  __,  __,  __,  __,  __,  __,  __, -13],
+  /* char \p{N}  PN */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  __,  __,  __,  CE,  __,  __,  CE,  __,  __,  __,  __,  __,  __,  __, -13],
+  /* char \p{P}  PP */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  CE,  CE,  CE,  CE,  __,  __,  __,  __,  CE,  __,  __,  CE,  __,  __,  __,  __, -13],
+  /* char \p{S}  PS */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  __,  __,  __,  CE,  __,  CE,  __,  CE,  __,  __,  __,  __,  __,  __,  __, -13],
+  /* char \p{Z}  PZ */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CE,  __,  __,  __,  CE,  __,  CE,  __,  __,  __,  __, -13],
+  /* char \p{I}  IS */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  IT,  __,  __,  __,  __,  __],
+  /* char \p{Is} IT */ [ __,  __,  __,  __,  __,  IU,  __,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  __,  __,  __,  __,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  __,  __,  __],
+  /* char \p{Is} IU */ [ __,  __,  __,  __,  __,  IU,  __,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  __,  __,  __,  __,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  IU,  __,  __, -13],
 ];
 
 // these modes can be pushed on the stack
