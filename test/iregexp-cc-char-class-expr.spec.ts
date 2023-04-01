@@ -1,6 +1,6 @@
 import { pass, fail } from './utils';
 
-describe('iregexp character class bracket', () => {
+describe('charClassExpr', () => {
   it('negative ^ assertion', () => {
     pass('[a]');
     pass('[a^a]');
@@ -35,4 +35,8 @@ describe('iregexp character class bracket', () => {
     fail('[a--b]');
     fail('[a-z-A-Z]');
   });
+  // TODO
+  //it('should fail on incorrect range', () => {
+  //  fail('[z-a]');
+  //});
 });

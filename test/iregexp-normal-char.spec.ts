@@ -1,6 +1,6 @@
 import { pass } from './utils';
 
-describe('iregexp atoms normal chars', () => {
+describe('NormalChar', () => {
   it('%x00-27', () => {
     pass('\u0000');
     pass('\u0001');
