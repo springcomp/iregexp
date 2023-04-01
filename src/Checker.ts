@@ -44,6 +44,7 @@ const C_DGIT: Class = 4; // 0-9
 const C_CMMA: Class = 5; // ,
 const C_LPAR: Class = 6; // (
 const C_RPAR: Class = 7; // )
+const C_PIPE: Class = 8; // |
 
 const ascii_class: Class[] = [
     /*
@@ -68,7 +69,7 @@ const ascii_class: Class[] = [
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   C_LBRC, __,     C_RBRC, C_NC,   C_NC,
+    C_NC,   C_NC,   C_NC,   C_LBRC, C_PIPE, C_RBRC, C_NC,   C_NC,
 ];
 
 const GO: State = 0; //  start
@@ -77,6 +78,7 @@ const QM: State = 2; //  qty min { requires digit
 const QN: State = 3; //  qty min ... digit or ,
 const QA: State = 4; //  qty max , requires digit
 const QX: State = 5; //  qty max ... digit or }
+const PI: State = 6; //  pipe
 
 const state_transition_table: State[][] = [
   /*
@@ -85,14 +87,15 @@ const state_transition_table: State[][] = [
   negative number. A regular expression is accepted if at the end of the text
   the state is OK and if the mode is DONE.
 
-                                   DGIT
-                     NC  QU   {   }   |   ,   (   )  */
-  /* start    GO */ [-2, __, __, __, -2, -2, -6, __],
-  /* ok       OK */ [-2, -3, -4, __, -2, __, -6, -7],
-  /* qty min  QM */ [__, __, __, __, QN, __, __, __],
-  /* qty min  QN */ [__, __, __, -5, QN, QA, __, __],
-  /* qty max  QA */ [__, __, __, __, QX, __, __, __],
-  /* qty max  QX */ [__, __, __, -5, QX, __, __, __],
+                                    DIGIT
+                     NC  QU   {   }   |   ,   (   )   |   */
+  /* start    GO */ [-2, __, __, __, -2, -2, -6, __, __],
+  /* ok       OK */ [-2, -3, -4, __, -2, __, -6, -7, -8],
+  /* qty min  QM */ [__, __, __, __, QN, __, __, __, __],
+  /* qty min  QN */ [__, __, __, -5, QN, QA, __, __, __],
+  /* qty max  QA */ [__, __, __, __, QX, __, __, __, __],
+  /* qty max  QX */ [__, __, __, -5, QX, __, __, __, __],
+  /* pipe     PI */ [-9, __, __, __, __, __, -6, __, __],
 ];
 
 // these modes can be pushed on the stack
@@ -162,6 +165,14 @@ class IRegexpChecker {
     } else {
       // or perform on of the actions
       switch (nextState){
+        case -9: // completed | branch
+          this.quantifiable = true;
+          this.state = OK;
+          break;
+        case -8: // |
+          this.quantifiable = false;
+          this.state = PI;
+          break;
         case -7: // )
           this.pop(Mode.PARENS);
           this.quantifiable = true;
