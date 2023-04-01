@@ -188,12 +188,10 @@ class IRegexpChecker {
       switch (nextState){
         case -11: // [
           this.pop(Mode.BRACKET);
-          this.quantifiable = true;
           this.state = OK;
           break;
         case -10: // [
           this.push(Mode.BRACKET);
-          this.quantifiable = false;
           this.state = LB;
           break;
         case -9: // completed | branch
