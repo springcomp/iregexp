@@ -341,7 +341,7 @@ class IRegexpChecker {
 }
 
 class IRegexp {
-  public check(expression: string): boolean{
+  public check(expression: string, nothrow: boolean = true): boolean{
     try{
       const checker = new IRegexpChecker();
       [...expression]
@@ -352,7 +352,11 @@ class IRegexp {
       return true;
     }
     catch (e) {
-      return false;
+      if (nothrow) {
+        return false;
+      } else {
+        throw e;
+      }
     }
   }
 }
