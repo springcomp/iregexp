@@ -44,16 +44,22 @@ const C_CMMA: Class = 4; // ,
 const C_RNGE: Class = 5; // -
 const C_DOT: Class = 6; // .
 const C_DGIT: Class = 7; // 0-9
-const C_LBRK: Class = 8; // [
-const C_ESC: Class = 9; // \
-const C_RBRK: Class = 10; // ]
-const C_EXCL: Class = 11; // ^
-const C_LN: Class = 12; // n
-const C_LR: Class = 13; // r
-const C_LT: Class = 14; // t
-const C_LBRC: Class = 15; // {
-const C_PIPE: Class = 16; // |
-const C_RBRC: Class = 17; // }
+const C_UL: Class = 8; // L
+const C_PP: Class = 9; // P p
+const C_LBRK: Class = 10; // [
+const C_ESC: Class = 11; // \
+const C_RBRK: Class = 12; // ]
+const C_EXCL: Class = 13; // ^
+const C_LL: Class = 14; // l
+const C_LM: Class = 15; // m
+const C_LN: Class = 16; // n
+const C_LO: Class = 17; // o
+const C_LR: Class = 18; // r
+const C_LT: Class = 19; // t
+const C_LU: Class = 20; // t
+const C_LBRC: Class = 21; // {
+const C_PIPE: Class = 22; // |
+const C_RBRC: Class = 23; // }
 
 const ascii_class: Class[] = [
     /*
@@ -71,13 +77,13 @@ const ascii_class: Class[] = [
     C_DGIT, C_DGIT, C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_QU, 
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
+    C_NC,   C_NC,   C_NC,   C_NC,   C_UL,   C_NC,   C_NC,   C_NC,
+    C_PP,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_LBRK, C_ESC,  C_RBRK, C_EXCL, C_NC,
 
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
-    C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_LN,   C_NC,
-    C_NC,   C_NC,   C_LR,   C_NC,   C_LT,   C_NC,   C_NC,   C_NC,
+    C_NC,   C_NC,   C_NC,   C_NC,   C_LL,   C_LM,   C_LN,   C_LO,
+    C_PP,   C_NC,   C_LR,   C_NC,   C_LT,   C_LU,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_LBRC, C_PIPE, C_RBRC, C_NC,   C_NC,
 ];
 
@@ -96,6 +102,10 @@ const BE: State = 11; // bracket ... CCE1 or ]
 const BI: State = 12; // bracket ... requires CCchar after ( "-" ccChar )
 const BJ: State = 13; // bracket ... requires CCchar after ( "-" ccChar )
 const BS: State = 14; // bracket \ escape sequence
+const CP: State = 15; // char props \p
+const CB: State = 16; // char props \p{
+const PL: State = 17; // char props \p{L
+const CL: State = 18; // char props \p{L
 
 const state_transition_table: State[][] = [
   /*
@@ -104,22 +114,26 @@ const state_transition_table: State[][] = [
   negative number. A regular expression is accepted if at the end of the text
   the state is OK and if the mode is DONE.
 
-                      NC    (    )   QU    ,    -    .   0-9   [    \    ]    ^    n    r    t    {    |    }  
-  /* start    GO */ [ -2,  -6,  __,  __,  -2,  __,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  __,  __,  __],
-  /* ok       OK */ [ -2,  -6,  -7,  -3,  __,  __,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -4,  -8,  __],
-  /* pipe     PI */ [ -9,  -6,  __,  __,  __,  __,  -9,  __,  __,  __,  __,  -9,  -9,  -9,  -9,  __,  __,  __],
-  /* qty min  QM */ [ __,  __,  __,  __,  __,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
-  /* qty min  QN */ [ __,  __,  __,  __,  QA,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  -5],
-  /* qty max  QA */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __],
-  /* qty max  QX */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  -5],
-  /* escape   ES */ [ __,  OK,  OK,  OK,  __,  OK,  OK,  __,  OK,  OK,  OK,  OK,  OK,  OK,  OK,  OK,  OK,  OK],
-  /* range    LB */ [ BE,  BE,  BE,  BE,  BE,  BH,  BE,  BE,  __,  BS,  __,  BR,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range    BR */ [ BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range    BH */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range    BE */ [ BE,  BE,  BE,  BE,  BE,  BI,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range    BI */ [ BJ,  BJ,  BJ,  BJ,  BJ,  __,  BJ,  BJ,  __,  BS, -11,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ],
-  /* range    BJ */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
-  /* range    BS */ [ __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE],
+                        NC    (    )   QU    ,    -    .   0-9   L  Pp    [    \    ]    ^     l,   m,   n    o    r    t   u,   {    |    }
+  /* start      GO */ [ -2,  -6,  __,  __,  -2,  __,  -2,  -2,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2, -2,  __,  __,  __],
+  /* ok         OK */ [ -2,  -6,  -7,  -3,  __,  __,  -2,  -2,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2, -2,  -4,  -8,  __],
+  /* pipe       PI */ [ -9,  -6,  __,  __,  __,  __,  -9,  __,  -9,  -9,  __,  __,  __,  -9,  -9,  -9,  -9,  -9,  -9,  -9, -9,  __,  __,  __],
+  /* qty min    QM */ [ __,  __,  __,  __,  __,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __,  __],
+  /* qty min    QN */ [ __,  __,  __,  __,  QA,  __,  __,  QN,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __,  -5],
+  /* qty max    QA */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __,  __],
+  /* qty max    QX */ [ __,  __,  __,  __,  __,  __,  __,  QX,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __,  -5],
+  /* escape     ES */ [ __,  OK,  OK,  OK,  __,  OK,  OK,  __,  __,  CP,  OK,  OK,  OK,  OK,  __,  __,  OK,  __,  OK,  OK, __,  OK,  OK,  OK],
+  /* range      LB */ [ BE,  BE,  BE,  BE,  BE,  BH,  BE,  BE,  BE,  BE,  __,  BS,  __,  BR,  BE,  BE,  BE,  BE,  BE,  BE, BE,  BE,  BE,  BE],
+  /* range      BR */ [ BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE, BE,  BE,  BE,  BE],
+  /* range      BH */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE, BE,  BE,  BE,  BE],
+  /* range      BE */ [ BE,  BE,  BE,  BE,  BE,  BI,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE, BE,  BE,  BE,  BE],
+  /* range      BI */ [ BJ,  BJ,  BJ,  BJ,  BJ,  __,  BJ,  BJ,  BJ,  BJ,  __,  BS, -11,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ,  BJ, BJ,  BJ,  BJ,  BJ],
+  /* range      BJ */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE, BE,  BE,  BE,  BE],
+  /* range      BS */ [ __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  BE,  BE,  BE,  __,  __,  BE,  __,  BE,  BE, BE,  BE,  BE,  BE],
+  /* char props CP */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __, -12,  __,  __],
+  /* char props CB */ [ __,  __,  __,  __,  __,  __,  __,  __,  PL,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __,  __],
+  /* char \p{L} PL */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CL,  CL,  __,  CL,  __,  CL, CL,  __,  __, -13],
+  /* char \p{L} PL */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __, -13],
 ];
 
 // these modes can be pushed on the stack
@@ -128,6 +142,7 @@ export enum Mode {
   QUANTITY,
   PARENS,
   BRACKET,
+  CPROPS,
 }
 
 class IRegexpChecker {
@@ -186,6 +201,14 @@ class IRegexpChecker {
     } else {
       // or perform on of the actions
       switch (nextState){
+        case -13: // \p{ ...}
+          this.pop(Mode.CPROPS)
+          this.state = OK;
+          break;
+        case -12: // \p{ or \P{
+          this.push(Mode.CPROPS)
+          this.state = CB;
+          break;
         case -11: // [
           this.pop(Mode.BRACKET);
           this.state = OK;
