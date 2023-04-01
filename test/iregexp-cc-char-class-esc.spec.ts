@@ -62,6 +62,16 @@ describe('charClassEsc', () => {
   it('should fail on invalid Z character class', () => {
     fail('\\p{Zx}');
   });
+  it('\\p{S} Symbols', () => {
+    pass('\\p{S}');
+    pass('\\p{Sc}');
+    pass('\\p{Sk}');
+    pass('\\p{Sm}');
+    pass('\\p{So}');
+  });
+  it('should fail on invalid S character class', () => {
+    fail('\\p{Sx}');
+  });
   //it('\\p{Is} IsBlock', () => {
   //  pass('\\p{}');
   //});
