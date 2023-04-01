@@ -18,8 +18,17 @@ describe('charClassEsc', () => {
     pass('\\p{Me}');
     pass('\\p{Mn}');
   });
-  it('should fail on invalid L character class', () => {
+  it('should fail on invalid M character class', () => {
     fail('\\p{Mx}');
+  });
+  it('\\p{N} Numbers', () => {
+    pass('\\p{N}');
+    pass('\\p{Nd}');
+    pass('\\p{Nl}');
+    pass('\\p{No}');
+  });
+  it('should fail on invalid N character class', () => {
+    fail('\\p{Nx}');
   });
   //it('\\p{Is} IsBlock', () => {
   //  pass('\\p{}');
