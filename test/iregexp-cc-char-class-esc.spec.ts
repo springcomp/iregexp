@@ -30,6 +30,15 @@ describe('charClassEsc', () => {
   it('should fail on invalid N character class', () => {
     fail('\\p{Nx}');
   });
+  it('\\p{Z} Separators', () => {
+    pass('\\p{Z}');
+    pass('\\p{Zl}');
+    pass('\\p{Zp}');
+    pass('\\p{Zs}');
+  });
+  it('should fail on invalid Z character class', () => {
+    fail('\\p{Zx}');
+  });
   //it('\\p{Is} IsBlock', () => {
   //  pass('\\p{}');
   //});
