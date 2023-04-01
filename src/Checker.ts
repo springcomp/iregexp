@@ -37,23 +37,23 @@ export type Class = number;
 const __: number = -1; // the universal error code
 
 const C_NC: Class = 0; // normal char
-const C_QU: Class = 1; // quantifier
-const C_LBRC: Class = 2; // {
-const C_RBRC: Class = 3; // }
-const C_DGIT: Class = 4; // 0-9
-const C_CMMA: Class = 5; // ,
-const C_LPAR: Class = 6; // (
-const C_RPAR: Class = 7; // )
-const C_PIPE: Class = 8; // |
+const C_LPAR: Class = 1; // (
+const C_RPAR: Class = 2; // )
+const C_QU: Class = 3; // quantifier
+const C_CMMA: Class = 4; // ,
+const C_RNGE: Class = 5; // -
+const C_DOT: Class = 6; // .
+const C_DGIT: Class = 7; // 0-9
+const C_LBRK: Class = 8; // [
 const C_ESC: Class = 9; // \
-const C_RNGE: Class = 10; // -
-const C_DOT: Class = 11; // .
-const C_LBRK: Class = 12; // [
-const C_RBRK: Class = 13; // ]
-const C_EXCL: Class = 14; // ^
-const C_LN: Class = 15; // n
-const C_LR: Class = 16; // r
-const C_LT: Class = 17; // t
+const C_RBRK: Class = 10; // ]
+const C_EXCL: Class = 11; // ^
+const C_LN: Class = 12; // n
+const C_LR: Class = 13; // r
+const C_LT: Class = 14; // t
+const C_LBRC: Class = 15; // {
+const C_PIPE: Class = 16; // |
+const C_RBRC: Class = 17; // }
 
 const ascii_class: Class[] = [
     /*
@@ -97,15 +97,15 @@ const state_transition_table: State[][] = [
   negative number. A regular expression is accepted if at the end of the text
   the state is OK and if the mode is DONE.
 
-                     NC  QU   {   }  0-9  ,   (   )   |   \   -   .   [   ]   ^   n   r   t
-  /* start    GO */ [-2, __, __, __, -2, -2, -6, __, __, ES, __, __, __, __, -2, -2, -2, -2],
-  /* ok       OK */ [-2, -3, -4, __, -2, __, -6, -7, -8, ES, __, __, __, __, -2, -2, -2, -2],
-  /* qty min  QM */ [__, __, __, __, QN, __, __, __, __, __, __, __, __, __, __, __, __, __],
-  /* qty min  QN */ [__, __, __, -5, QN, QA, __, __, __, __, __, __, __, __, __, __, __, __],
-  /* qty max  QA */ [__, __, __, __, QX, __, __, __, __, __, __, __, __, __, __, __, __, __],
-  /* qty max  QX */ [__, __, __, -5, QX, __, __, __, __, __, __, __, __, __, __, __, __, __],
-  /* pipe     PI */ [-9, __, __, __, __, __, -6, __, __, __, __, __, __, __, -9, -9, -9, -9],
-  /* escape   ES */ [__, OK, OK, OK, __, __, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK],
+                     NC   (   )  QU   ,   -   .  0-9  [   \   ]   ^   n   r   t   {   |   }  
+  /* start    GO */ [-2, -6, __, __, -2, __, __, -2, __, ES, __, -2, -2, -2, -2, __, __, __],
+  /* ok       OK */ [-2, -6, -7, -3, __, __, __, -2, __, ES, __, -2, -2, -2, -2, -4, -8, __],
+  /* qty min  QM */ [__, __, __, __, __, __, __, QN, __, __, __, __, __, __, __, __, __, __],
+  /* qty min  QN */ [__, __, __, __, QA, __, __, QN, __, __, __, __, __, __, __, __, __, -5],
+  /* qty max  QA */ [__, __, __, __, __, __, __, QX, __, __, __, __, __, __, __, __, __, __],
+  /* qty max  QX */ [__, __, __, __, __, __, __, QX, __, __, __, __, __, __, __, __, __, -5],
+  /* pipe     PI */ [-9, -6, __, __, __, __, __, __, __, __, __, -9, -9, -9, -9, __, __, __],
+  /* escape   ES */ [__, OK, OK, OK, __, OK, OK, __, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK],
 ];
 
 // these modes can be pushed on the stack
