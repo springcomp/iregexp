@@ -40,6 +40,19 @@ describe('charClassEsc', () => {
   it('should fail on invalid N character class', () => {
     fail('\\p{Nx}');
   });
+  it('\\p{P} Punctation', () => {
+    pass('\\p{P}');
+    pass('\\p{Pc}');
+    pass('\\p{Pd}');
+    pass('\\p{Pe}');
+    pass('\\p{Pf}');
+    pass('\\p{Pi}');
+    pass('\\p{Po}');
+    pass('\\p{Ps}');
+  });
+  it('should fail on invalid P character class', () => {
+    fail('\\p{Px}');
+  });
   it('\\p{Z} Separators', () => {
     pass('\\p{Z}');
     pass('\\p{Zl}');
