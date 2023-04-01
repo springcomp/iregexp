@@ -83,12 +83,12 @@ const ascii_class: Class[] = [
 
 const GO: State = 0; //  start
 const OK: State = 1; //  ok
-const QM: State = 2; //  qty min { requires digit
-const QN: State = 3; //  qty min ... digit or ,
-const QA: State = 4; //  qty max , requires digit
-const QX: State = 5; //  qty max ... digit or }
-const PI: State = 6; //  pipe
-const ES: State = 7; //  escap e
+const PI: State = 2; //  pipe
+const QM: State = 3; //  qty min { requires digit
+const QN: State = 4; //  qty min ... digit or ,
+const QA: State = 5; //  qty max , requires digit
+const QX: State = 6; //  qty max ... digit or }
+const ES: State = 7; //  escape
 
 const state_transition_table: State[][] = [
   /*
@@ -100,11 +100,11 @@ const state_transition_table: State[][] = [
                      NC   (   )  QU   ,   -   .  0-9  [   \   ]   ^   n   r   t   {   |   }  
   /* start    GO */ [-2, -6, __, __, -2, __, __, -2, __, ES, __, -2, -2, -2, -2, __, __, __],
   /* ok       OK */ [-2, -6, -7, -3, __, __, __, -2, __, ES, __, -2, -2, -2, -2, -4, -8, __],
+  /* pipe     PI */ [-9, -6, __, __, __, __, __, __, __, __, __, -9, -9, -9, -9, __, __, __],
   /* qty min  QM */ [__, __, __, __, __, __, __, QN, __, __, __, __, __, __, __, __, __, __],
   /* qty min  QN */ [__, __, __, __, QA, __, __, QN, __, __, __, __, __, __, __, __, __, -5],
   /* qty max  QA */ [__, __, __, __, __, __, __, QX, __, __, __, __, __, __, __, __, __, __],
   /* qty max  QX */ [__, __, __, __, __, __, __, QX, __, __, __, __, __, __, __, __, __, -5],
-  /* pipe     PI */ [-9, -6, __, __, __, __, __, __, __, __, __, -9, -9, -9, -9, __, __, __],
   /* escape   ES */ [__, OK, OK, OK, __, OK, OK, __, OK, OK, OK, OK, OK, OK, OK, OK, OK, OK],
 ];
 
