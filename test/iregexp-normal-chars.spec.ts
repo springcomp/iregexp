@@ -1,4 +1,4 @@
-import { check } from '../src';
+import { pass } from './utils';
 
 describe('iregexp atoms normal chars', () => {
   it('%x00-27', () => {
@@ -129,75 +129,3 @@ describe('iregexp atoms normal chars', () => {
     // ...
   });
 });
-
-describe('iregexp parens atoms', () => {
-  it('parens', () => {
-    pass('(a)');
-    pass('(a)+');
-    pass('(a){2}');
-    pass('(a){2,3}');
-  });
-  it('should fail on mismatched parens', () => {
-    fail('(');
-    fail(')');
-    fail('(a');
-    fail('a)');
-  });
-});
-
-describe('iregexp atoms', () => {
-  it('sequence', () => {
-    pass('a(a)a');
-  });
-});
-
-describe('iregexp quantifiers', () => {
-  it('quantifier', () => {
-    pass('a*');
-    pass('a+');
-    pass('a?');
-  });
-  it('quantity', () => {
-    pass('a{2}');
-    pass('a{2,3}');
-  });
-  it('should fail on invalid quantifiers', () => {
-    fail('*');
-    fail('+');
-    fail('?');
-    fail('a**');
-    fail('a++');
-    fail('a??');
-  });
-  it('should fail on invalid quantity', () => {
-    fail('{');
-    fail('}');
-    fail('{}');
-    fail('{,}');
-    fail('{4,}');
-    fail('{,2}');
-    fail('a{');
-    fail('a}');
-    fail('a{}');
-    fail('a{,}');
-    fail('a{4,}');
-    fail('a{,2}');
-  });
-});
-
-function pass(expression: string): void {
-  expect(check(expression)).toEqual(true);
-}
-function fail(expression: string): void {
-	let succeeded = false;
-	try{
-		succeeded = check(expression);
-	}
-	catch(e){
-		expect(e).toBeInstanceOf(Error);
-	}
-
-	if (succeeded){
-		throw new Error(`the expression ${expression} was incorrectly considered a valid regular expression.`);
-	}
-}
