@@ -1,4 +1,4 @@
-# I-Regex Checker
+# I-Regexp Checker
 
 IRegexpChecker is pushdown automaton that very quickly determines if a
 regular expression using a specified interoperable subset is
