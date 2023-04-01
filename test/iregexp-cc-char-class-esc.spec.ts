@@ -1,6 +1,16 @@
 import { pass, fail } from './utils';
 
 describe('charClassEsc', () => {
+  it('\\p{C} Others', () => {
+    pass('\\p{C}');
+    pass('\\p{Cc}');
+    pass('\\p{Cf}');
+    pass('\\p{Cn}');
+    pass('\\p{Co}');
+  });
+  it('should fail on invalid C character class', () => {
+    fail('\\p{Cx}');
+  });
   it('\\p{L} Letters', () => {
     pass('\\p{L}');
     pass('\\p{Ll}');

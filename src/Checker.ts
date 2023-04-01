@@ -117,14 +117,16 @@ const BJ: State = 13; // bracket ... requires CCchar after ( "-" ccChar )
 const BS: State = 14; // bracket \ escape sequence
 const CP: State = 15; // char props \p
 const CB: State = 16; // char props \p{
-const PL: State = 17; // char props \p{L
-const CL: State = 18; // char props \p{L
-const PM: State = 19; // char props \p{M
-const CM: State = 20; // char props \p{M
-const PN: State = 21; // char props \p{N
-const CN: State = 22; // char props \p{N
-const PZ: State = 23; // char props \p{Z
-const CZ: State = 24; // char props \p{Z
+const PC: State = 17; // char props \p{C
+const CC: State = 18; // char props \p{C
+const PL: State = 19; // char props \p{L
+const CL: State = 20; // char props \p{L
+const PM: State = 21; // char props \p{M
+const CM: State = 22; // char props \p{M
+const PN: State = 23; // char props \p{N
+const CN: State = 24; // char props \p{N
+const PZ: State = 25; // char props \p{Z
+const CZ: State = 26; // char props \p{Z
 
 const state_transition_table: State[][] = [
   /*
@@ -150,14 +152,16 @@ const state_transition_table: State[][] = [
   /* range      BJ */ [ BE,  BE,  BE,  BE,  BE,  __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  BS, -11,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  BE, BE,  BE,  BE,  BE],
   /* range      BS */ [ __,  BE,  BE,  BE,  BE,  BE,  BE,  BE,  __,  __,  __,  __,  BE,  __,  __,  BE,  BE,  BE,  BE,  __,  __,  __,  __,  __,  __,  __,  __,  BE,  __,  __,  BE,  BE,  BE, BE,  BE,  BE,  BE],
   /* char props CP */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __, -12,  __,  __],
-  /* char props CB */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  PL,  PM,  PN,  __,  __,  PZ,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __,  __],
+  /* char props CB */ [ __,  __,  __,  __,  __,  __,  __,  __,  PC,  PL,  PM,  PN,  __,  __,  PZ,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __,  __],
+  /* char \p{C} PC */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CC,  __,  __,  CC,  __,  __,  __,  __,  CC,  CC,  __,  __,  __,  __, __,  __,  __, -13],
+  /* char \p{C} CC */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __, -13],
   /* char \p{L} PL */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CL,  CL,  __,  CL,  __,  __,  __,  CL, CL,  __,  __, -13],
   /* char \p{L} CL */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __, -13],
   /* char \p{M} PM */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CM,  __,  CM,  __,  __,  __,  __,  __,  CM,  __,  __,  __,  __,  __, __,  __,  __, -13],
   /* char \p{M} CM */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __, -13],
   /* char \p{N} PN */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CN,  __,  __,  __,  __,  CN,  __,  __,  CN,  __,  __,  __,  __, __,  __,  __, -13],
   /* char \p{N} CN */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __, -13],
-  /* char \p{Z} CZ */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CZ,  __,  __,  __,  CZ,  __,  CZ,  __, __,  __,  __, -13],
+  /* char \p{Z} PZ */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  CZ,  __,  __,  __,  CZ,  __,  CZ,  __, __,  __,  __, -13],
   /* char \p{Z} CZ */ [ __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __,  __, __,  __,  __, -13],
 ];
 
