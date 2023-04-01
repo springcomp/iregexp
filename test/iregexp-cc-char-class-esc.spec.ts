@@ -10,11 +10,16 @@ describe('charClassEsc', () => {
     pass('\\p{Lu}');
   });
   it('should fail on invalid L character class', () => {
-    fail('\\p{Ln}');
-    fail('\\p{Lp}');
-    fail('\\p{Lq}');
-    fail('\\p{Lr}');
-    fail('\\p{Ls}');
+    fail('\\p{Lx}');
+  });
+  it('\\p{M} Marks', () => {
+    pass('\\p{M}');
+    pass('\\p{Mc}');
+    pass('\\p{Me}');
+    pass('\\p{Mn}');
+  });
+  it('should fail on invalid L character class', () => {
+    fail('\\p{Mx}');
   });
   //it('\\p{Is} IsBlock', () => {
   //  pass('\\p{}');
