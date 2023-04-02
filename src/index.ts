@@ -4,16 +4,15 @@ export function check(expression: string): boolean {
   return Checker.check(expression);
 }
 
-export function ensureExpression(expression: string): [boolean, Error?] {
+export function ensureExpression(expression: string): void {
   try {
     Checker.check(expression, false);
-    return [true, undefined];
   }
   catch (e) {
     if(e instanceof Error) {
-      return [false, e];
+      throw e;
     }
-    return [false, new Error(`error parsing I-regexp expression: ${e}`)];
+    throw new Error(`error parsing I-regexp expression: ${e}`);
   }
 }
 
