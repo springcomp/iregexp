@@ -1,7 +1,7 @@
 {
   "name": "@springcomp/iregexp",
   "description": "I-Regexp push-down automaton checker",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": {
     "name": "springcomp",
     "email": "springcomp@users.noreply.github.com"
@@ -13,9 +13,9 @@
   "files": [
     "dist/"
   ],
-  "homepage": "https://github.com/jmespath-community/iregexp#readme",
+  "homepage": "https://github.com/springcomp/iregexp#readme",
   "bugs": {
-    "url": "https://github.com/jmespath-community/iregexp/issues"
+    "url": "https://github.com/springcomp/iregexp/issues"
   },
   "keywords": [
     "regex"
