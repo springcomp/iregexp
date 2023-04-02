@@ -128,4 +128,7 @@ describe('NormalChar', () => {
     pass('\u0081');
     // ...
   });
+  it('miscellaneous', () => {
+    pass(',,');
+  });
 });

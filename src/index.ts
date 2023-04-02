@@ -5,15 +5,7 @@ export function check(expression: string): boolean {
 }
 
 export function ensureExpression(expression: string): void {
-  try {
     Checker.check(expression, false);
-  }
-  catch (e) {
-    if(e instanceof Error) {
-      throw e;
-    }
-    throw new Error(`error parsing I-regexp expression: ${e}`);
-  }
 }
 
 export const iregexp = {
