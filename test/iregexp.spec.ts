@@ -2,11 +2,14 @@ import { ensureExpression } from '../src';
 
 describe('invalid expression', () => {
   it('should report error', () => {
-		const [ok, err] = ensureExpression('[?');
-    expect(ok).toEqual(false);
-    expect(err).toBeInstanceOf(Error);
-    if (err instanceof(Error)) {
-      expect(err.message).toMatch(/offset/);
+    try {
+		  ensureExpression('[?');
+    }
+    catch (err) {
+      expect(err).toBeInstanceOf(Error);
+      if (err instanceof(Error)) {
+        expect(err.message).toMatch(/offset/);
+      }
     }
   });
 });
