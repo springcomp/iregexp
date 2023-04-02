@@ -32,4 +32,8 @@ describe('iregexp quantifiers', () => {
     fail('a{4,}');
     fail('a{,2}');
   });
+  // TODO:
+  //it('should fail on incorrect quantity', () => {
+  //  fail(',,{5,3}')
+  //});
 });
