@@ -1,7 +1,7 @@
 {
   "name": "@springcomp/iregexp",
   "description": "I-Regexp push-down automaton checker",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": {
     "name": "springcomp",
     "email": "springcomp@users.noreply.github.com"
