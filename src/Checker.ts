@@ -137,7 +137,7 @@ const state_transition_table: State[][] = [
   The state transition table takes the current state and the current symbol,
   and returns either a new state or an action. An action is represented as a
   negative number. A regular expression is accepted if at the end of the text
-  the state is OK and if the mode is DONE.
+  the state is OK (or PI) and if the mode is DONE.
 
                          NC    (    )  *+?    ,    -    .   0-9 A-Z    C    I    L    M    N    P    S    Z    [    \    ]    ^  a-z    c    d    e    f    i    k    l    m    n    o    p    r    s    t    u    {    |    }
   /* start       GO */ [ -2,  -6,  __,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2, -10,  ES,  __,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  __,  __,  __],
@@ -319,7 +319,7 @@ class IRegexpChecker {
     // without throwing an error. This method throws an error if the
     // regular expression was not accepted; in other words, the final check failed.
 
-    if (this.state !== OK) {
+    if (![OK, PI].includes(this.state)) {
       this.onError();
     }
 
