@@ -3,7 +3,7 @@ IRegexpChecker is pushdown automaton that very quickly determines if a
 regular expression using a specified interoperable subset¹ is
 syntactically correct.
 
-¹ - https://www.ietf.org/archive/id/draft-bormann-jsonpath-iregexp-02.html
+¹ - https://ietf-wg-jsonpath.github.io/iregexp/draft-ietf-jsonpath-iregexp.html
 
 */
 
