@@ -200,7 +200,7 @@ class IRegexpChecker {
 
   private state: State;
   private offset: number;
-  private stack: Mode[];
+  public stack: Mode[];
 
   // set to true when *, + or ? quantifiers are allowed
   private quantifiable: boolean;
@@ -342,19 +342,36 @@ class IRegexpChecker {
 }
 
 class IRegexp {
-  public check(expression: string, nothrow: boolean = true): boolean{
+  public check(expression: string, nothrow: boolean = true): [boolean, string?]{
+
+    const peek = (ck: IRegexpChecker): Mode => {
+      return ck.stack.slice(-1)[0];
+    }
+
+    let escapeFlag = false;
+
+    let js: number[] = [];
     try{
       const checker = new IRegexpChecker();
       [...expression]
         .map(s => s.codePointAt(0)!)
-        .map(ch => checker.check(ch))
-      ;
+        .map(ch => {
+          checker.check(ch)
+          if (ch === 0x2e && !escapeFlag && peek(checker) !== Mode.BRACKET) {
+            //         [     ^     \     n    \      r     ]
+            js.push(0x5b, 0x5e, 0x5c, 0x6e, 0x5c, 0x72, 0x5d);
+          } else {
+            js.push(ch);
+          }
+          escapeFlag = ch === 0x5c && !escapeFlag;
+        });
+
       checker.finalCheck();
-      return true;
+      return [true, String.fromCodePoint(...js)];
     }
     catch (e) {
       if (nothrow) {
-        return false;
+        return [false, undefined];
       } else {
         throw e;
       }
