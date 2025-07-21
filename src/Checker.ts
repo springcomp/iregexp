@@ -225,10 +225,13 @@ class IRegexpChecker {
 
     // determine the character's class
 
-    if (ch >= 128) {
-      nextClass = C_NC;
-    } else {
+    if (ch < 128) {
       nextClass = ascii_class[ch];
+    } else if (ch >= 0xd800 && ch <= 0xdfff) { // surrogate code points
+      return this.onError();
+    }
+    else {
+      nextClass = C_NC;
     }
 
     // get the next state from the state transition table
