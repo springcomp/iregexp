@@ -81,6 +81,7 @@ const ascii_class: Class[] = [
     /*
         This array maps the 128 ASCII characters into character classes.
         The remaining Unicode characters are normal characters C_NC.
+        (except invalid surrogate code points)
     */
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
     C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_NC,
@@ -93,7 +94,7 @@ const ascii_class: Class[] = [
     C_DGIT, C_DGIT, C_NC,   C_NC,   C_NC,   C_NC,   C_NC,   C_QU, 
 
     C_NC,   C_UA,   C_UA,   C_UC,   C_UA,   C_UA,   C_UA,   C_UA,
-    C_UA,   C_UI,   C_UA,   C_UA,   C_UL,   C_UM,   C_UN,   C_UA,
+    C_UA,   C_NC,   C_UA,   C_UA,   C_UL,   C_UM,   C_UN,   C_UA,
     C_UP,   C_UA,   C_UA,   C_US,   C_UA,   C_UA,   C_UA,   C_UA,
     C_UA,   C_UA,   C_UZ,   C_LBRK, C_ESC,  C_RBRK, C_EXCL, C_NC,
 

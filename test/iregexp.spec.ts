@@ -55,7 +55,7 @@ describe("Appendix A", () => {
 		pass("[^\\*].*");
 	});
 	it("rfc6643.txt  524", () => {
-		pass("\\p{IsBasicLatin}{0,255}");
+		fail("\\p{IsBasicLatin}{0,255}");
 	});
 
 	it("rfc6991.txt  541", () => {
